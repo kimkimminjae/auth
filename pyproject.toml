@@ -5,10 +5,16 @@ description = ""
 authors = ["minjae <akswo0607@gmail.com>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+start = "main:app"
+
+
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = "^0.115.8"
 uvicorn = "^0.34.0"
+sqlalchemy = "^2.0.37"
+psycopg-binary = "^3.2.4"
 
 
 [build-system]
