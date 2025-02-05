@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  postgres-db:
+#    https://int-i.github.io/sql/2021-08-21/postgres-docker-compose/
+    image: postgres:latest
+    restart: always
+    env_file:
+      - ./db/.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER} # superuser
+      POSTGRES_PASSWORD_FILE: /run/secrets/db-password
+      POSTGRES_DB: ${POSTGRES_DB}
+      TZ: ${TZ}
+    secrets:
+      - db-password
+    volumes:
+  #db 컨테이너는 최초 실행될 때 한 번, /docker-entrypoint-initdb.d/ 폴더 안에 있는 *.sql, *.sql.gz, *.sh 파일을 실행합니다. 그러므로 초기화 코드를 만들고, 그 파일 또는 폴더를 컨테이너 내부의 /docker-entrypoint-initdb.d/ 폴더에 넣어서 원하는 대로 초기화를 할 수 있습니다.
+      - postgres-data:/var/lib/postgresql/data
+      - ./db/migration:/migration
+      - ./db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+        - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+secrets:
+  db-password:
+    file: ./db/password.txt
+
+volumes:
+  postgres-data:

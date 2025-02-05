@@ -1,0 +1,25 @@
+컨테이너 접속
+docker exec -it <container_id> /bin/bash
+exit
+
+컨테이너 생성
+docker run -d -p 80:80 --name <container_name> <image_name>
+
+컨테이너 중지
+docker stop <container_name>
+
+컨테이너 시작
+docker start <container_name>
+
+삭제
+
+docker volume rm <volume_name>
+docker rmi <image_name>
+docker rm <container_name>
+docker rmi $(docker images -q) -f // 모든 이미지 삭제
+docker rm $(docker ps -a -q) -f // 모든 컨테이너 삭제
+docker rmi $(docker images -q) -f // 모든 이미지 삭제
+docker rm $(docker ps -a -q) -f // 모든 컨테이너 삭제
+docker system prune -a -f // 모든 컨테이너, 이미지, 네트워크, 볼륨 삭제
+
+
