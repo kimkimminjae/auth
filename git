@@ -1,0 +1,13 @@
+깃허브에서 레파지토리 만들기
+
+루트 디렉토리에서 git init
+git remote add origin <깃허브 주소>
+git add .
+
+ide 이용시 commit and push 사용, 명령어 사용 시
+git commit -m "커밋 메시지"
+git push origin master
+
+메인 브랜치 이름 변경하기
+master -> main
+git branch -M main
