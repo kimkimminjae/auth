@@ -1,32 +1,70 @@
-from fastapi import FastAPI, HTTPException
-# import bcrypt
-import uvicorn
-from dto import RegisterRequestDto
+from typing import Annotated
+import logging
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.security import OAuth2PasswordBearer
+
+from datetime import datetime
+
+from sqlalchemy.orm import Session
+from fastapi.responses import JSONResponse
+
+from dto import LoginRequestDto, RegisterRequestDto
+
+from fastapi.params import Depends
+from database import get_db
+from models import User, Role
+from seed import Hasher
 app = FastAPI()
 
-
-# def hash_password(password):
-#    password = "MySecretPassword"
-#    password_bytes = password.encode('utf-8')
-#    hashed_bytes = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
-#    return hashed_bytes.decode('utf-8')
-
-# Usage example
-
-# 가상 사용자 저장소
-fake_users_db = {}
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @app.post("/register/")
-async def register(user: RegisterRequestDto) -> None:
-    # hashed_password = hash_password("MySecretPassword")
-    #
-    # if user.username in fake_users_db:
-    #     raise HTTPException(status_code=400, detail="Username already exists")
-    print(user)
+def register(user: RegisterRequestDto, db: Session = Depends(get_db)) -> JSONResponse:
+    try:
+        is_stored_user = db.query(User).filter(User.email == user.email).first()
+        if is_stored_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
 
-    # return {"유저": user.name,
-    #         "이메일": user.email,
-    #         "해시된 비밀번호": hashed_password}
+        new_user = User(
+            name=user.name,
+            email=str(user.email),
+            password=Hasher.get_password_hash(user.password),
+            emailVerified=datetime.now(),
+            role=Role.USER
+        )
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+
+        print(new_user)
+
+        return JSONResponse(
+            content={"message": "User registered successfully"},
+            status_code=200,
+            headers={"X-Custom-Header": "MyValue"},
+            media_type="application/json"
+        )
+    except Exception as e:
+        logger.error(f"Error in register endpoint: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+    # return {"message": "Hello, FastAPI!"}  # fastapi는 dict일 때 자동 직렬화됨
+
+
+@app.post("/login/")
+async def login(user: LoginRequestDto, db: Session = Depends(get_db)):
+    # DB에서 사용자 조회
+    stored_user = db.query(User).filter(User.email == user.email).first()
+    if not stored_user:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    # 비밀번호 검증
+    if not Hasher.verify_password(user.password, stored_user.password):
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    return {"msg": "Login successful"}
+
 
 @app.get("/")
 async def root():
@@ -38,5 +76,8 @@ async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
 
-if __name__ == '__main__':
-    uvicorn.run(app, port=8080, host='localhost')
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+@app.get("/items/")
+async def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
+    return {"token": token}
