@@ -1,0 +1,7 @@
+SQL의 TIMESTAMP 타입은 Python의 datetime.datetime 객체와 호환됩니다.
+
+아래가 더 쉬운 단계
+https://github.com/igorbenav/FastAPI-boilerplate/blob/main/src/app/core/security.py#L99
+
+이거는 조금 어려움
+https://github.com/jason810496/FastAPI-Vue-OAuth2/blob/main/backend/api/auth.py

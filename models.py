@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic.v1 import BaseModel
 from sqlalchemy import Integer, String, ForeignKey, text, func, DateTime, Enum as SQLAlchemyEnum
 from enum import Enum
@@ -5,7 +7,7 @@ from sqlalchemy.sql.schema import Column
 from database import Base # 파일이니깐 .database로 해야함 ./  하면 폴더로 인식함
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
-
+from sqlalchemy.orm import Mapped, mapped_column
 
 class Role(str, Enum):
     ADMIN = "ADMIN"
@@ -40,5 +42,12 @@ class User(Base):
     #         raise ValueError("이메일은 필수입니다.")
     #     return email
 
+
+class TokenBlacklist(Base):
+    __tablename__ = "TokenBlacklist"
+
+    id: Mapped[int] = mapped_column("id", autoincrement=True, nullable=False, unique=True, primary_key=True)
+    token: Mapped[str] = mapped_column(String, unique=True, index=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime)
 
 

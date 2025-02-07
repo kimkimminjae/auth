@@ -59,6 +59,15 @@ CREATE TABLE "VerificationToken" (
     CONSTRAINT "VerificationToken_pkey" PRIMARY KEY ("id")
 );
 
+CREATE TABLE "TokenBlacklist" (
+    "id" TEXT NOT NULL,
+    "token" TEXT NOT NULL,
+    "expires" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "TokenBlacklist" PRIMARY KEY ("id")
+);
+
+
 -- CreateTable
 CREATE TABLE "PasswordResetToken" (
     "id" TEXT NOT NULL,
