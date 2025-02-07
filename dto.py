@@ -11,3 +11,14 @@ class RegisterRequestDto(LoginRequestDto):
         # 암호화된 비밀번호를 직렬화하지 않도록 설정
         from_attributes = True
         #FastAPI에서 ORM 데이터를 응답으로 보낼 때 꼭 사용
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    name: str = None
+
+class UserInDB(BaseModel):
+    hashed_password: str
+

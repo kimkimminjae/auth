@@ -18,6 +18,9 @@ psycopg-binary = "^3.2.4"
 passlib = "^1.7.4"
 pydantic = {extras = ["email"], version = "^2.10.6"}
 psycopg2 = "^2.9.10"
+jose = "^1.0.0"
+python-jose = "^3.3.0"
+python-multipart = "^0.0.20"
 
 
 [build-system]

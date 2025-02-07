@@ -1,3 +1,4 @@
+from pydantic.v1 import BaseModel
 from sqlalchemy import Integer, String, ForeignKey, text, func, DateTime, Enum as SQLAlchemyEnum
 from enum import Enum
 from sqlalchemy.sql.schema import Column
@@ -38,3 +39,6 @@ class User(Base):
     #     if not email:
     #         raise ValueError("이메일은 필수입니다.")
     #     return email
+
+
+
