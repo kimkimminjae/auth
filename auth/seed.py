@@ -1,27 +1,8 @@
-from click import DateTime
-
-from database import get_db
-from models import User
-from passlib.context import CryptContext
-from models import Role
+from setting.database import get_db
+from auth.model.auth_model import User
+from auth.model.auth_model import Role
 from datetime import datetime
-
-# SQL의 TIMESTAMP 타입은 Python의 datetime.datetime 객체와 호환됩니다.
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-class Hasher:
-
-    @staticmethod
-    def get_password_hash(password):
-        return pwd_context.hash(password)
-
-    @staticmethod
-    def verify_password(plain_password, hashed_password):
-        return pwd_context.verify(plain_password, hashed_password)
-
-
+from auth.utils.authenticate import Hasher
 def seed_admin():
 
     db = get_db()

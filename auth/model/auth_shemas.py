@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from datetime import datetime
 
 class LoginRequestDto(BaseModel):
     email: str
@@ -12,13 +13,25 @@ class RegisterRequestDto(LoginRequestDto):
         from_attributes = True
         #FastAPI에서 ORM 데이터를 응답으로 보낼 때 꼭 사용
 
+
+# -------------- token --------------
 class Token(BaseModel):
     access_token: str
     token_type: str
 
 class TokenData(BaseModel):
-    name: str = None
+    username_or_email: str
 
-class UserInDB(BaseModel):
-    hashed_password: str
+
+class TokenBlacklistBase(BaseModel):
+    token: str
+    expires_at: datetime
+
+
+class TokenBlacklistCreate(TokenBlacklistBase):
+    pass
+
+
+class TokenBlacklistUpdate(TokenBlacklistBase):
+    pass
 
